@@ -9,6 +9,10 @@ import us.codecraft.webmagic.Spider;
 
 public class TestController extends Controller{
 	public void index(){
+		renderText("success");
+	}
+	
+	public void start(){
 		BaseController.spiderService.fullStart();
 		renderText("success");
 	}
