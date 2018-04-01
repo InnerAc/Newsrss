@@ -24,6 +24,9 @@ public class University extends Model<University>{
 		return find(sql);
 	}
 	
+	public int getUid(){
+		return getInt("uid");
+	}
 	public String getUname() {
 		return getStr("uname");
 	}

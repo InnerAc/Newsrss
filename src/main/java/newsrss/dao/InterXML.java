@@ -12,6 +12,9 @@ public class InterXML extends Model<InterXML>{
 		return find(sql, uid);
 	}
 	
+	public int getXid(){
+		return getInt("xid");
+	}
 	public String getXurl() {
 		return getStr("xurl");
 	}

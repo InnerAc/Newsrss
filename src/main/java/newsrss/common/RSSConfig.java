@@ -12,6 +12,7 @@ import com.jfinal.plugin.druid.DruidPlugin;
 import com.jfinal.render.ViewType;
 import com.jfinal.template.Engine;
 
+import newsrss.controller.BaseController;
 import newsrss.controller.TestController;
 import newsrss.dao.Article;
 import newsrss.dao.InterXML;
@@ -58,6 +59,11 @@ public class RSSConfig extends JFinalConfig{
 	public void configHandler(Handlers me) {
 		me.add(new ContextPathHandler("baseUrl"));
 		
+	}
+	
+	@Override
+	public void afterJFinalStart(){
+		BaseController.spiderService.init();
 	}
 
 }

@@ -6,6 +6,9 @@ import com.jfinal.plugin.activerecord.Model;
 
 public class Article extends Model<Article>{
 	private static final long serialVersionUID = 1L;
+	public Article(){
+		
+	}
 	public Article(String key,String title,String content,long time,String src, int uid){
 		setAkey(key);
 		setAtitle(title);
@@ -15,9 +18,15 @@ public class Article extends Model<Article>{
 		setAuid(uid);
 	}
 	public List<Article> selectByUniversity(int uid) {
-		String sql = "select * from article where uid=?";
+		String sql = "select * from article where auid=?";
 		return find(sql, uid);
 	}
+	public int insert(Article article){
+		article.save();
+		return article.getInt("aid");
+	}
+	
+	
 	public String getAkey() {
 		return getStr("akey");
 	}
