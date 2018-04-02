@@ -8,6 +8,7 @@ import com.jfinal.config.Plugins;
 import com.jfinal.config.Routes;
 import com.jfinal.ext.handler.ContextPathHandler;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
+import com.jfinal.plugin.cron4j.Cron4jPlugin;
 import com.jfinal.plugin.druid.DruidPlugin;
 import com.jfinal.render.ViewType;
 import com.jfinal.template.Engine;
@@ -17,6 +18,7 @@ import newsrss.controller.TestController;
 import newsrss.dao.Article;
 import newsrss.dao.InterXML;
 import newsrss.dao.University;
+import newsrss.task.RealTask;
 
 public class RSSConfig extends JFinalConfig{
 
@@ -41,6 +43,7 @@ public class RSSConfig extends JFinalConfig{
 	@Override
 	public void configPlugin(Plugins me) {
 		loadPropertyFile("config.properties");
+		//sql
 		DruidPlugin dp = new DruidPlugin(getProperty("jdbcUrl"), getProperty("user"), getProperty("password").trim());
         me.add(dp);
         ActiveRecordPlugin arp = new ActiveRecordPlugin(dp);
@@ -48,6 +51,12 @@ public class RSSConfig extends JFinalConfig{
         arp.addMapping("university", "uid", University.class);
         arp.addMapping("interxml", "xid", InterXML.class);
         me.add(arp);
+        //cron
+        Cron4jPlugin cp = new Cron4jPlugin();
+        String cron = getProperty("cron");
+        System.out.println(cron);
+        cp.addTask(cron, new RealTask());
+        me.add(cp);
 	}
 
 	@Override

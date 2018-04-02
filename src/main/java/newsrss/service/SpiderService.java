@@ -6,6 +6,7 @@ import java.util.List;
 import newsrss.dao.InterXML;
 import newsrss.dao.University;
 import newsrss.spider.NewsSpider;
+import newsrss.spider.RealPage;
 import us.codecraft.webmagic.Spider.Status;
 import newsrss.spider.FullPage;
 
@@ -34,6 +35,25 @@ public class SpiderService extends BaseService{
 	 */
 	public void fullStart(){
 		for(NewsSpider spider : fullQueue){
+			if(spider.getStatus() != Status.Running){
+				spider.start();
+			}
+		}
+	}
+	
+	public void cronStart(){
+		for(NewsSpider spider : fullQueue){
+			if(spider.getStatus() != Status.Running){
+				int xid = spider.getXid();
+				fullQueue.remove(spider);
+				InterXML inter = interXMLDAO.findById(xid);
+				University university = universityDAO.findById(inter.getUid());
+				spider = new NewsSpider(new RealPage().setArgs(inter), inter, university);
+				realQueue.add(spider);
+			}
+		}
+		System.out.println(fullQueue.size()+" "+realQueue.size());
+		for(NewsSpider spider : realQueue){
 			if(spider.getStatus() != Status.Running){
 				spider.start();
 			}

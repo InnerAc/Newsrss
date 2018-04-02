@@ -17,7 +17,8 @@ public class LevelLimitScheduler extends PriorityScheduler {
         if(request.getExtra("_level") == null){
         	super.push(request, task);
         }else if (((Integer) request.getExtra("_level")) <= levelLimit) {
-            super.push(request, task);
+        	super.pushWhenNoDuplicate(request, task);
+//            super.push(request, task);
         }else {
 			System.out.println(request.getUrl());
 		}
