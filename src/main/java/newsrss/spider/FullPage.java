@@ -1,6 +1,7 @@
 package newsrss.spider;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 
@@ -11,6 +12,8 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.processor.PageProcessor;
+import us.codecraft.webmagic.selector.Selectable;
+import us.codecraft.webmagic.utils.UrlUtils;
 
 public class FullPage implements PageProcessor {
 	private Site site = Site.me().setRetryTimes(3).setSleepTime(200);
@@ -50,14 +53,18 @@ public class FullPage implements PageProcessor {
 	}
 	@Override
 	public void process(Page page) {
-		if(page.getUrl().toString().matches(risnews)){
+		String url = page.getUrl().toString();
+		if(url.matches(risnews)){
 			Article article = new Article();
-			article.setAsrc(page.getUrl().toString());
+			article.setAsrc(url);
 			article.setAuid(uid);
-			String rootUrl = page.getUrl().regex("(http.*://[a-zA-z\\d\\.]+/)").toString();
 			String tmp = page.getHtml().xpath(xtitle).regex(rtitle).toString();
 			article.setAtitle(tmp);
-			tmp = page.getHtml().xpath(xcontent).regex(rcontent).replace("src=\"/", "src=\""+rootUrl).toString();
+			List<String> srcs = page.getHtml().xpath(xcontent).xpath("//img/@src").all();
+			tmp = page.getHtml().xpath(xcontent).regex(rcontent).toString();
+			for(String src : srcs){
+				tmp = tmp.replace(src, UrlUtils.canonicalizeUrl(src, page.getUrl().toString()));
+			}
 			article.setAcontent(tmp);
 			tmp = page.getHtml().xpath(xtime).regex(rtime).replace("[年月/]", "-").replace("[日]","").toString();
 			article.setAtime(DateUtil.Date2TimeStamp(tmp));
@@ -65,12 +72,9 @@ public class FullPage implements PageProcessor {
 			article.setAkey(tmp);
 			article.save();
 		}else{
-			String rootUrl = page.getUrl().regex("(http.*://[a-zA-z\\d\\.]+)").toString();
 			page.addTargetRequests(page.getHtml().xpath(xlist).all());
 			String next = page.getHtml().xpath(xnext).regex(rnext).toString();
-			if(next.startsWith("?") || next.startsWith("/")){
-				next = rootUrl+next;
-			}
+			next = UrlUtils.canonicalizeUrl(next, url);
 			Request nextRequest = new Request(next);
 			Map<String, Object> extras = new HashMap<String, Object>();
 			extras.put("_level",(Integer)page.getRequest().getExtra("_level")+1);

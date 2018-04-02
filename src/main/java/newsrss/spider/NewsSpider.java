@@ -13,6 +13,7 @@ public class NewsSpider extends Spider{
 
 	private int xid = 0;
 	private String uname = null;
+	private String url = null;
 	
 	public int getXid(){
 		return this.xid;
@@ -29,13 +30,33 @@ public class NewsSpider extends Spider{
 		super(pageProcessor);
 		xid = interXML.getXid();
 		uname = university.getUname();
+		url = interXML.getXurl();
 		Map<String, Object> extras = new HashMap<String, Object>();
 		extras.put("_level",0);
 		Request request = new Request(interXML.getXurl());
 		request.setExtras(extras);
 		addRequest(request);
-		setScheduler(new LevelLimitScheduler(5));
+		setScheduler(new LevelLimitScheduler(3));
 		thread(3);
+	}
+	
+	public Map<String, Object> getInfo(){
+		Map<String, Object> info = new HashMap<>();
+		info.put("status", getStatus());
+		info.put("uname", this.uname);
+		info.put("xid", this.xid);
+		info.put("count", getPageCount());
+		return info;
+	}
+	
+	@Override
+	public void start(){
+		Map<String, Object> extras = new HashMap<String, Object>();
+		extras.put("_level",0);
+		Request request = new Request(url);
+		request.setExtras(extras);
+		addRequest(request);
+		super.start();
 	}
 
 }
