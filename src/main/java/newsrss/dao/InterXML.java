@@ -2,6 +2,7 @@ package newsrss.dao;
 
 import java.util.List;
 
+import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Model;
 
 public class InterXML extends Model<InterXML>{
@@ -10,6 +11,11 @@ public class InterXML extends Model<InterXML>{
 	public List<InterXML> selectByUniversity(int uid){
 		String sql = "select * from interxml where uid=?";
 		return find(sql, uid);
+	}
+	public boolean deleteByUid(int uid){
+		String sql = "DELETE FROM interxml where uid=?";
+		Db.update(sql,uid);
+		return true;
 	}
 	
 	public int getXid(){

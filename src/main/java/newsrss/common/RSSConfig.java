@@ -13,8 +13,8 @@ import com.jfinal.plugin.druid.DruidPlugin;
 import com.jfinal.render.ViewType;
 import com.jfinal.template.Engine;
 
+import newsrss.controller.AdminController;
 import newsrss.controller.BaseController;
-import newsrss.controller.TestController;
 import newsrss.dao.Article;
 import newsrss.dao.InterXML;
 import newsrss.dao.University;
@@ -31,7 +31,9 @@ public class RSSConfig extends JFinalConfig{
 
 	@Override
 	public void configRoute(Routes me) {
-		me.add("/", TestController.class);
+//		me.add("/", TestController.class);
+		me.add("admin",AdminController.class,"views/admin");
+		me.add("/",AdminController.class,"views/admin");
 		
 	}
 
@@ -52,11 +54,11 @@ public class RSSConfig extends JFinalConfig{
         arp.addMapping("interxml", "xid", InterXML.class);
         me.add(arp);
         //cron
-        Cron4jPlugin cp = new Cron4jPlugin();
-        String cron = getProperty("cron");
-        System.out.println(cron);
-        cp.addTask(cron, new RealTask());
-        me.add(cp);
+//        Cron4jPlugin cp = new Cron4jPlugin();
+//        String cron = getProperty("cron");
+//        System.out.println(cron);
+//        cp.addTask(cron, new RealTask());
+//        me.add(cp);
 	}
 
 	@Override
@@ -72,6 +74,9 @@ public class RSSConfig extends JFinalConfig{
 	
 	@Override
 	public void afterJFinalStart(){
+		loadPropertyFile("config.properties");
+		int deep = Integer.valueOf(getProperty("news_deep"));
+		RSSConstants.NEWS_DEEP = deep;
 		BaseController.spiderService.init();
 	}
 

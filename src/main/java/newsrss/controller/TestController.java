@@ -13,7 +13,7 @@ public class TestController extends Controller{
 	}
 	
 	public void start(){
-		BaseController.spiderService.fullStart();
+		BaseController.spiderService.cronStart();
 		renderText("success");
 	}
 }

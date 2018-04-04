@@ -2,6 +2,8 @@ package newsrss.dao;
 
 import java.util.List;
 
+import org.omg.CORBA.INTERNAL;
+
 import com.jfinal.plugin.activerecord.Model;
 
 public class Article extends Model<Article>{
@@ -18,8 +20,12 @@ public class Article extends Model<Article>{
 		setAuid(uid);
 	}
 	public List<Article> selectByUniversity(int uid) {
-		String sql = "select * from article where auid=?";
+		String sql = "SELECT * FROM article WHERE auid=? ORDER BY atime DESC";
 		return find(sql, uid);
+	}
+	public List<Article> selectByUniversity(int uid,int index,int length) {
+		String sql = "SELECT * FROM article WHERE auid=? ORDER BY atime DESC LIMIT ?,?";
+		return find(sql, uid,index,length);
 	}
 	public int insert(Article article){
 		article.save();

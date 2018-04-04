@@ -1,7 +1,9 @@
 package newsrss.service;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import newsrss.dao.InterXML;
 import newsrss.dao.University;
@@ -41,6 +43,9 @@ public class SpiderService extends BaseService{
 		}
 	}
 	
+	/**
+	 * 定时爬取任务
+	 */
 	public void cronStart(){
 		for(NewsSpider spider : fullQueue){
 			if(spider.getStatus() != Status.Running){
@@ -52,11 +57,41 @@ public class SpiderService extends BaseService{
 				realQueue.add(spider);
 			}
 		}
-		System.out.println(fullQueue.size()+" "+realQueue.size());
 		for(NewsSpider spider : realQueue){
 			if(spider.getStatus() != Status.Running){
 				spider.start();
 			}
 		}
+	}
+
+	public List<Map> monitor(){
+		List<Map> res = new ArrayList<>();
+		for(NewsSpider spider : fullQueue){
+			res.add(spider.getInfo());
+		}
+		for(NewsSpider spider : realQueue){
+			res.add(spider.getInfo());
+		}
+		return res;
+	}
+	
+	/**
+	 * 清除所有爬虫进程
+	 */
+	public void clearSpider() {
+		System.out.println("clear start");
+		for(NewsSpider spider : fullQueue){
+			if(spider.getStatus() != Status.Stopped){
+				spider.stop();
+			}
+		}
+		fullQueue.clear();
+		for(NewsSpider spider : realQueue){
+			if(spider.getStatus() != Status.Stopped){
+				spider.stop();
+			}
+		}
+		realQueue.clear();
+		System.out.println("clear ok");
 	}
 }
