@@ -24,7 +24,9 @@ public class UniversityService extends BaseService{
 		}
 		return uid;
 	}
-	
+	public boolean changeExtend(int uid,String spiderName,int extend){
+		return universityDAO.changeExtend(uid, spiderName, extend);
+	}
 	public boolean update(int uid,String uname){
 		University university = universityDAO.findById(uid);
 		university.setUname(uname);
@@ -44,7 +46,10 @@ public class UniversityService extends BaseService{
 		String[] uids = sorts.split(",");
 		int n = uids.length;
 		for(int i=0;i<n;i++){
-			universityDAO.update(Integer.valueOf(uids[i]),n-i);
+			universityDAO.update(n-i,Integer.valueOf(uids[i]));
 		}
+	}
+	public int getDefaultUid() {
+		return universityDAO.selectDefultUid();
 	}
 }

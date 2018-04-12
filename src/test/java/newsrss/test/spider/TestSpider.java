@@ -1,9 +1,10 @@
-package newsrss.spider;
+package newsrss.test.spider;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import newsrss.spider.LevelLimitScheduler;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Site;

@@ -24,7 +24,7 @@ public class Article extends Model<Article>{
 		return find(sql, uid);
 	}
 	public List<Article> selectByUniversity(int uid,int index,int length) {
-		String sql = "SELECT * FROM article WHERE auid=? ORDER BY atime DESC LIMIT ?,?";
+		String sql = "SELECT aid,atitle,atime FROM article WHERE auid=? ORDER BY atime DESC LIMIT ?,?";
 		return find(sql, uid,index,length);
 	}
 	public int insert(Article article){

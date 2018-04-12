@@ -40,6 +40,16 @@ public class University extends Model<University>{
 		String sql = "update university set ulvl=? where uid=?";
 		Db.update(sql,value,uid);
 	}
+	
+	public boolean changeExtend(int uid,String spiderName,int extend){
+		String sql = "update university set uspider=?,uextend=? where uid=?";
+		int res = Db.update(sql,spiderName,extend,uid);
+		if(res == 1){
+			return true;
+		}else{
+			return false;
+		}
+	}
 	public int getUid(){
 		return getInt("uid");
 	}
@@ -54,6 +64,24 @@ public class University extends Model<University>{
 	}
 	public void setLvl(int lvl){
 		set("ulvl", lvl);
+	}
+	public int getExtend(){
+		return getInt("uextend");
+	}
+	public void setExtend(int uextend){
+		set("uextend", uextend);
+	}
+
+	public void setSpider(String uspider){
+		set("uspider", uspider);
+	}
+	public String getSpider(){
+		return getStr("uspider");
+	}
+	
+	public int selectDefultUid() {
+		String sql = "SELECT uid FROM university WHERE ulvl= (SELECT MAX(ulvl) FROM university)";
+		return findFirst(sql).getUid();
 	}
 
 

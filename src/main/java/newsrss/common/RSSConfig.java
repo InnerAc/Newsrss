@@ -15,6 +15,8 @@ import com.jfinal.template.Engine;
 
 import newsrss.controller.AdminController;
 import newsrss.controller.BaseController;
+import newsrss.controller.NewsController;
+import newsrss.controller.RestController;
 import newsrss.dao.Article;
 import newsrss.dao.InterXML;
 import newsrss.dao.University;
@@ -33,7 +35,8 @@ public class RSSConfig extends JFinalConfig{
 	public void configRoute(Routes me) {
 //		me.add("/", TestController.class);
 		me.add("admin",AdminController.class,"views/admin");
-		me.add("/",AdminController.class,"views/admin");
+		me.add("/",NewsController.class,"views/news");
+		me.add("rest",RestController.class);
 		
 	}
 
@@ -54,11 +57,10 @@ public class RSSConfig extends JFinalConfig{
         arp.addMapping("interxml", "xid", InterXML.class);
         me.add(arp);
         //cron
-//        Cron4jPlugin cp = new Cron4jPlugin();
-//        String cron = getProperty("cron");
-//        System.out.println(cron);
-//        cp.addTask(cron, new RealTask());
-//        me.add(cp);
+        Cron4jPlugin cp = new Cron4jPlugin();
+        String cron = getProperty("cron");
+        cp.addTask(cron, new RealTask());
+        me.add(cp);
 	}
 
 	@Override

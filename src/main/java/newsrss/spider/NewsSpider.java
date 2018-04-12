@@ -2,6 +2,7 @@ package newsrss.spider;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import newsrss.common.RSSConstants;
@@ -17,14 +18,17 @@ public class NewsSpider extends Spider{
 	private String uname = null;
 	private String url = null;
 	private String sTime = null;
-	
+	private String spiderName = null;
+	public boolean isExtend = false;
 	public int getXid(){
 		return this.xid;
 	}
 	public String getUname(){
 		return this.uname;
 	}
-	
+	public String getSpiderName() {
+		return spiderName;
+	}
 	public NewsSpider(PageProcessor pageProcessor) {
 		super(pageProcessor);
 	}
@@ -42,6 +46,45 @@ public class NewsSpider extends Spider{
 		request.setExtras(extras);
 		addRequest(request);
 		setScheduler(new LevelLimitScheduler(RSSConstants.NEWS_DEEP));
+		addPipeline(new MysqlPipeline());
+		thread(3);
+	}
+	
+	/**
+	 * 添加外部Spider
+	 * @param pageProcessor
+	 * @param university
+	 * @param isFull
+	 */
+	public NewsSpider(TemplatePage pageProcessor, University university,boolean isFull,String spiderName){
+		super(pageProcessor);
+		this.isExtend = true;
+		this.spiderName = spiderName;
+		xid = university.getUid();
+		uname = university.getUname();
+		url = pageProcessor.getStartUrl(1).get(0);
+		sTime = new Date().toLocaleString();
+		pageProcessor.setUid(xid);
+		if(isFull){
+			pageProcessor.isFull(true);
+			List<String> urls = pageProcessor.getStartUrl(RSSConstants.NEWS_DEEP);
+			for(int i=0;i<urls.size();i++){
+				Map<String, Object> extras = new HashMap<String, Object>();
+				extras.put("_level",i);
+				Request request = new Request(urls.get(i));
+				request.setExtras(extras);
+				addRequest(request);
+			}
+		}else{
+			pageProcessor.isFull(false);
+			Map<String, Object> extras = new HashMap<String, Object>();
+			extras.put("_level",0);
+			Request request = new Request(url);
+			request.setExtras(extras);
+			addRequest(request);
+		}
+		setScheduler(new LevelLimitScheduler(RSSConstants.NEWS_DEEP));
+		addPipeline(new MysqlPipeline());
 		thread(3);
 	}
 	

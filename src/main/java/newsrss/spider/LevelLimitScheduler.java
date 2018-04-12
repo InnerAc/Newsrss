@@ -16,11 +16,11 @@ public class LevelLimitScheduler extends PriorityScheduler {
     public synchronized void push(Request request, Task task) {
         if(request.getExtra("_level") == null){
         	super.push(request, task);
-        }else if (((Integer) request.getExtra("_level")) <= levelLimit) {
+        }else if (((Integer) request.getExtra("_level")) < levelLimit) {
         	super.pushWhenNoDuplicate(request, task);
 //            super.push(request, task);
         }else {
-			System.out.println(request.getUrl());
+			System.out.println("end to ->"+request.getUrl());
 		}
     }
 }

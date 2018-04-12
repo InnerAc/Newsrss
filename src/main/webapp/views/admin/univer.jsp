@@ -22,7 +22,23 @@
 		<span style="display:none;" onclick="rollbackUname();" id="rollbackuname" class="glyphicon glyphicon-remove utitle_edit"></span>
 		<input id="uname" class="utitle" type="text" value="${univer.uname }" readOnly>
 	</div>
-	<h3>规则列表</h3><small><a href="admin/addXML/${univer.uid }" class="btn btn-sm btn-info">添加规则</a></small><hr>
+	<h3>规则列表</h3><small><a href="admin/addXML/${univer.uid }" class="btn btn-sm btn-info">添加规则</a>
+		<a onclick="changeType();" class="btn btn-sm btn-warning">修改类别</a>
+	</small><hr>
+	<form class="form-inline" id="change_div" style="display:none;">
+		<div class="form-group">
+			<label>爬虫类型</label>
+			<select class="form-control" id="SpiderType">
+				<option <c:if test="${univer.uextend == 0}">selected</c:if> value="0">规则类爬虫</option>
+				<option <c:if test="${univer.uextend == 1}">selected</c:if> value="1">自定义类爬虫</option>
+			</select>
+		</div>
+		<div class="form-group">
+			<label>爬虫类名</label>
+			<input type="text" class="form-control" id="extendSpiderName" value="${univer.uspider }" placeholder="爬虫类名">
+		</div>
+		<a class="btn btn-success" onclick="updateType();">更新</a>
+	</form><hr>
 	<ul class="list-group">
 		<c:forEach items="${inters }" var="inter">
 			<li class="list-group-item">

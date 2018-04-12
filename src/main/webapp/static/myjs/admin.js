@@ -14,7 +14,7 @@ var old_uname;
  * 编辑高校名称
  */
 function editUname(){
-	uid = $('#uid').html()
+	uid = $('#uid').html();
 	input = $('#uname');
 	old_uname = input.val();
 	input.removeAttr('readOnly');
@@ -27,7 +27,7 @@ function editUname(){
  * 更新高校名称
  */
 function updateUname(){
-	uid = $('#uid').html()
+	uid = $('#uid').html();
 	input = $('#uname');
 	new_uname = input.val();
 	
@@ -56,6 +56,29 @@ function rollbackUname(){
 	$('#rollbackuname').hide();
 }
 
+/**
+ * 修改高校类别
+ */
+function changeType(){
+	change_div = $('#change_div');
+	change_div.show();
+}
+
+/**
+ * 更新高校类别
+ */
+function updateType(){
+	uid = $('#uid').html();
+	spiderName = $('#extendSpiderName').val();
+	spiderType = $('#SpiderType').val();
+	$.post('admin/editType',{uid:uid,uspider:spiderName,uextend:spiderType},function(data){
+		if(data == 0){
+			alert('修改成功')
+		}else{
+			alert('修改失败');
+		}
+	});
+}
 /**
  * 编辑规则
  */

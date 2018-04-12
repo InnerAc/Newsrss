@@ -5,6 +5,6 @@
 	<ul class="list">
 		<li><a id="univermanager" href="admin">学校管理</a></li>
 		<li><a id="universort" href="admin/sort">展示顺序</a></li>
-		<li><a id="spidermonitor">爬虫监控</a></li>
+		<li><a id="spidermonitor" href="admin/spider">爬虫监控</a></li>
 	</ul>
 </div>

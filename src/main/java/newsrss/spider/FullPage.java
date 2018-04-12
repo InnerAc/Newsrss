@@ -16,7 +16,7 @@ import us.codecraft.webmagic.selector.Selectable;
 import us.codecraft.webmagic.utils.UrlUtils;
 
 public class FullPage implements PageProcessor {
-	private Site site = Site.me().setRetryTimes(3).setSleepTime(200);
+	private Site site = Site.me().setRetryTimes(3).setSleepTime(1000);
 	private String xurl = null;
 	private int uid = 0;
 	private String risnews = null;
@@ -53,30 +53,34 @@ public class FullPage implements PageProcessor {
 	}
 	@Override
 	public void process(Page page) {
-		String url = page.getUrl().toString();
-		if(url.matches(risnews)){
-			Article article = new Article();
-			article.setAsrc(url);
-			article.setAuid(uid);
+		Selectable url = page.getUrl();
+		System.out.println("---->"+url);
+		if(page.getHtml().xpath("base").match()){
+			page.setUrl(page.getHtml().xpath("//base/@href"));
+		}
+		if(url.toString().matches(risnews)){
+			page.putField("asrc", url.toString());
+			page.putField("auid", uid);
 			String tmp = page.getHtml().xpath(xtitle).regex(rtitle).toString();
-			article.setAtitle(tmp);
+			page.putField("atitle", tmp);
 			List<String> srcs = page.getHtml().xpath(xcontent).xpath("//img/@src").all();
 			tmp = page.getHtml().xpath(xcontent).regex(rcontent).toString();
 			for(String src : srcs){
 				tmp = tmp.replace(src, UrlUtils.canonicalizeUrl(src, page.getUrl().toString()));
 			}
-			article.setAcontent(tmp);
-			tmp = page.getHtml().xpath(xtime).regex(rtime).replace("[年月/]", "-").replace("[日]","").toString();
-			article.setAtime(DateUtil.Date2TimeStamp(tmp));
-			tmp = page.getUrl().regex(rnewid).toString();
-			article.setAkey(tmp);
-			article.save();
+			page.putField("acontent", tmp);
+			tmp = page.getHtml().xpath(xtime).regex(rtime).replace("[年月/]", "-").replace("[日]","").replace("(时|分|小时|分钟)", ":").replace("[秒种]", "").toString();
+			page.putField("atime", DateUtil.Date2TimeStamp(tmp));
+			tmp = url.regex(rnewid).toString();
+			page.putField("akey", tmp);
 		}else{
+			String baseUrl = page.getUrl().toString();
 			page.addTargetRequests(page.getHtml().xpath(xlist).all());
 			String next = page.getHtml().xpath(xnext).regex(rnext).toString();
-			next = UrlUtils.canonicalizeUrl(next, url);
+			next = UrlUtils.canonicalizeUrl(next, baseUrl);
 			Request nextRequest = new Request(next);
 			Map<String, Object> extras = new HashMap<String, Object>();
+			System.out.println("extra -> "+page.getRequest());
 			extras.put("_level",(Integer)page.getRequest().getExtra("_level")+1);
 			nextRequest.setExtras(extras);
 			page.addTargetRequest(nextRequest);

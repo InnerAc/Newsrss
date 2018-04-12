@@ -35,7 +35,20 @@ public class AdminController extends BaseController{
 			renderText("1");
 		}
 	}
-	
+	/**
+	 * 修改学校类型
+	 */
+	public void editType(){
+		String spiderName = getPara("uspider");
+		int uid = getParaToInt("uid");
+		int extend = getParaToInt("uextend");
+		boolean isok = universityService.changeExtend(uid, spiderName, extend);
+		if (isok) {
+			renderText("0");
+		}else{
+			renderText("1");
+		}
+	}
 	/**
 	 * 学校详情页面
 	 */
@@ -119,7 +132,7 @@ public class AdminController extends BaseController{
 		renderJson(res);
 	}
 	
-	public void startSpider(){
+	public void startSpider() throws ClassNotFoundException, InstantiationException, IllegalAccessException{
 		spiderService.cronStart();
 		renderText("0");
 	}
